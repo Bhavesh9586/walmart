@@ -86,7 +86,7 @@ Copy code
 csharp
 Copy code
 .
-├── app.py             # FastAPI main app
-├── requirements.txt   # Dependencies
-├── README.md          # Documentation
-└── static/            # HTML, CSS, JS for UI
+├── app.py          
+├── requirements.txt   
+├── README.md         
+└── static/            
