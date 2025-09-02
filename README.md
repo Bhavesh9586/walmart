@@ -66,22 +66,7 @@ Copy code
 curl -X POST "https://your-render-url.onrender.com/scrape" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://www.walmart.com/ip/123456789"}'
-Example Response
-json
-Copy code
-{
-  "product_id": "123456789",
-  "name": "Walmart Sample Product",
-  "brand": "Great Value",
-  "price": 12.99,
-  "upc": "000123456789",
-  "short_description": "Delicious and fresh...",
-  "long_description": "Full product description...",
-  "nutrition": { "calories": 120, "allergens": "Milk, Soy" },
-  "reviews": [
-    { "nickname": "JohnD", "title": "Great!", "rating": 5, "text": "Loved it!" }
-  ]
-}
+
 📂 Project Structure
 csharp
 Copy code
