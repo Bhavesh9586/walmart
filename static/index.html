@@ -3,173 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Walmart Product Scraper</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Walmart Scraper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /*
+        * New & Improved Walmart Scraper Design
+        * ======================================
+        * This design uses a soft, modern color palette and card-based layout
+        * to enhance readability and visual hierarchy.
+        */
+
         :root {
-            --primary-color: #007bff;
-            --background-gradient: linear-gradient(135deg, #1f283d, #2c3e50);
-            --card-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
-            --text-light: #f0f0f0;
-            --text-dark: #333;
-            --box-shadow-heavy: rgba(0, 0, 0, 0.25);
-            --box-shadow-light: rgba(0, 0, 0, 0.1);
+            --primary-green: #388e3c; /* A fresh, vibrant green */
+            --primary-green-dark: #2e7d32;
+            --dark-text: #212529;
+            --light-text: #6c757d;
+            --background-color: #f0f2f5; /* Soft light gray background */
+            --container-bg: #ffffff;
+            --border-color: #e0e0e0; /* A softer border color */
+            --box-shadow-light: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --box-shadow-medium: 0 5px 20px rgba(0, 0, 0, 0.08);
+            --success-bg: #e8f5e9;
+            --success-border: #a5d6a7;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            padding: 20px;
-            background: var(--background-gradient);
-            color: var(--text-light);
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
+            padding: 40px 20px;
+            background-color: var(--background-color);
+            color: var(--dark-text);
+            line-height: 1.6;
         }
 
         .container {
             width: 100%;
-            max-width: 1000px;
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: var(--glass-border);
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--container-bg);
             border-radius: 20px;
-            padding: 30px 40px;
-            box-shadow: 0 8px 32px var(--box-shadow-heavy);
+            box-shadow: var(--box-shadow-medium);
+            padding: 40px;
+            box-sizing: border-box;
         }
 
         h1 {
-            text-align: center;
-            margin-bottom: 30px;
             font-size: 2.5rem;
-            text-shadow: 2px 2px 4px var(--box-shadow-heavy);
+            font-weight: 700;
+            margin: 0 0 30px 0;
+            color: var(--primary-green-dark);
+            text-align: center;
         }
 
         /* Form Styling */
         #scrapeForm {
             display: flex;
             gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
+            margin-bottom: 30px;
         }
 
         #url-or-id {
             flex-grow: 1;
-            padding: 12px 15px;
             font-size: 1rem;
-            border: none;
+            border: 1px solid var(--border-color);
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--text-dark);
-            box-shadow: inset 0 2px 4px var(--box-shadow-light);
+            padding: 14px 20px;
+            background-color: #fff;
+            transition: all 0.3s ease;
         }
 
         #url-or-id:focus {
-            outline: 2px solid var(--primary-color);
-        }
-
-        .select-wrapper, button {
-            padding: 12px 20px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.2);
         }
 
         .select-wrapper {
-            background: rgba(255, 255, 255, 0.9);
+            position: relative;
+            display: inline-block;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background-color: #fff;
+            padding: 10px 15px;
         }
 
         #input-type {
             border: none;
             background: transparent;
-            color: var(--text-dark);
+            color: var(--dark-text);
             font-family: 'Poppins', sans-serif;
             font-size: 1rem;
             outline: none;
+            appearance: none; /* Hides default select dropdown arrow */
+            padding-right: 25px;
         }
 
-        button {
-            background-color: var(--primary-color);
-            color: white;
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 0.8rem;
+            color: var(--light-text);
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        button[type="submit"] {
+            padding: 14px 30px;
+            font-size: 1rem;
             font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: var(--primary-green);
+            color: white;
             transition: all 0.3s ease;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        button[type="submit"]:hover {
+            background-color: var(--primary-green-dark);
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px var(--box-shadow-heavy);
         }
 
         /* Feedback styling */
         #loading, #error {
             text-align: center;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-size: 1.1rem;
-            display: none; /* Hidden by default */
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        #loading { background-color: rgba(0, 123, 255, 0.2); border: 1px solid var(--primary-color); }
-        #error { background-color: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ff8a98; }
+        #loading { background-color: #e3f2fd; border: 1px solid #90caf9; color: #1976d2; }
+        #error { background-color: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c; box-shadow: 0 4px 12px rgba(252, 165, 165, 0.2); }
+
+        #error::before {
+            content: '⚠️'; /* Warning emoji */
+            font-size: 1.5rem;
+        }
 
         /* Results Styling */
-        #responseOutput { margin-top: 30px; }
+        #responseOutput { margin-top: 40px; }
 
         .product-grid {
             display: grid;
             grid-template-columns: 1fr 1.5fr;
-            gap: 30px;
+            gap: 40px;
+            align-items: start;
         }
 
         .main-image {
             width: 100%;
             height: auto;
             border-radius: 15px;
-            box-shadow: 0 4px 15px var(--box-shadow-heavy);
+            border: 1px solid var(--border-color);
             margin-bottom: 15px;
+            box-shadow: var(--box-shadow-light);
         }
 
-        .image-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
+        .image-gallery { display: flex; flex-wrap: wrap; gap: 10px; }
 
         .gallery-thumb {
             width: 70px;
             height: 70px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             transition: all 0.3s ease;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
         }
+
         .gallery-thumb:hover, .gallery-thumb.active {
-            border-color: var(--primary-color);
+            border-color: var(--primary-green);
             transform: scale(1.05);
         }
 
-        .product-details h2 {
-            margin-top: 0;
-            font-size: 1.8rem;
-            line-height: 1.3;
-        }
         .product-details .brand {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: #a0c3ff;
-            margin-bottom: 15px;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+            text-transform: uppercase;
         }
+
+        .product-details h2 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
         .product-details .price {
             font-size: 2.5rem;
-            font-weight: 600;
-            color: #ffc107;
-            margin-bottom: 20px;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin: 10px 0 25px 0;
         }
 
         .spec-grid {
@@ -178,129 +212,171 @@
             gap: 15px;
             margin-top: 20px;
         }
+
         .spec-item {
-            background: rgba(0,0,0,0.2);
-            padding: 10px 15px;
-            border-radius: 8px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
         }
+
         .spec-item .label {
             font-weight: 600;
-            font-size: 0.9rem;
-            color: #ccc;
+            font-size: 0.8rem;
+            color: var(--light-text);
+            margin-bottom: 4px;
+            text-transform: uppercase;
         }
+
         .spec-item .value {
-            font-size: 1.1rem;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         .info-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: var(--glass-border);
-        }
-        .info-section h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-        .info-section p {
-            background: rgba(0,0,0,0.2);
-            padding: 20px;
-            border-radius: 10px;
-            line-height: 1.6;
-            font-size: 0.95rem;
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 15px;
+            background: var(--container-bg);
+            box-shadow: var(--box-shadow-light);
         }
 
-        /* Nutrition Facts Styling */
-        #nutrition-facts-container {
-            background: white;
-            color: var(--text-dark);
+        .info-section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-green);
+            padding-bottom: 8px;
+            display: inline-block;
+            color: var(--dark-text);
+        }
+
+        .info-section p {
+            background: var(--background-color);
             padding: 20px;
             border-radius: 10px;
-            overflow-x: auto;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            color: var(--dark-text);
         }
 
         /* Review Section Styling */
         .review-item {
-            background: rgba(0,0,0,0.2);
-            padding: 20px;
-            border-radius: 10px;
+            background: var(--background-color);
+            padding: 25px;
+            border-radius: 15px;
             margin-bottom: 15px;
-            border-left: 4px solid var(--primary-color);
+            border-left: 5px solid var(--primary-green);
+            box-shadow: var(--box-shadow-light);
         }
+
         .review-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-            flex-wrap: wrap;
         }
+
         .review-user {
             font-weight: 600;
             font-size: 1.1rem;
+            color: var(--dark-text);
         }
+
         .review-rating {
             font-size: 1.1rem;
             color: #ffc107;
         }
+
         .review-title {
             font-weight: 600;
             margin-bottom: 5px;
+            font-size: 1rem;
+            color: var(--primary-green-dark);
         }
+
         .review-text {
             font-size: 0.95rem;
-            color: #ddd;
+            color: var(--light-text);
             line-height: 1.6;
         }
 
-        /* Shop Confidently Styling (NEW) */
-        .shop-confidently-section {
-            margin-top: 25px;
-        }
-        .shop-confidently-section h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #ccc;
-            margin-bottom: 10px;
-        }
+        /* Shop Confidently Styling */
         .shop-confidently-badges {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
+            margin-top: 20px;
         }
+
         .badge {
-            background: rgba(255, 255, 255, 0.15);
-            color: #f0f0f0;
-            padding: 6px 12px;
-            border-radius: 20px;
+            background: var(--success-bg);
+            color: var(--dark-text);
+            padding: 8px 15px;
+            border-radius: 25px;
             font-size: 0.85rem;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            border: 1px solid var(--success-border);
         }
+
         .badge::before {
             content: '✔';
-            color: #28a745;
+            color: var(--primary-green);
             font-weight: bold;
+            font-size: 1rem;
         }
 
-
-        /* Responsive adjustments */
-        @media (max-width: 800px) {
+        /* == Mobile Responsive Adjustments == */
+        @media (max-width: 768px) {
             .product-grid {
                 grid-template-columns: 1fr;
             }
-            .container { padding: 20px; }
-            h1 { font-size: 2rem; }
-        }
-        @media (max-width: 500px) {
-            #scrapeForm { flex-direction: column; }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+
+            #scrapeForm {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            button[type="submit"] {
+                width: 100%;
+            }
+
+            .select-wrapper {
+                width: 100%;
+                padding: 0;
+                border: none;
+            }
+
+            #input-type {
+                padding: 14px 20px;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                width: 100%;
+            }
+
+            .info-section {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Walmart Scraper 🛒</h1>
+    <h1>Walmart Scraper</h1>
+
     <form id="scrapeForm">
         <div class="select-wrapper">
             <select id="input-type">
@@ -309,7 +385,7 @@
             </select>
         </div>
         <input type="text" id="url-or-id" name="url-or-id" placeholder="Enter Product URL..." required>
-        <button type="submit">Scrape Product</button>
+        <button type="submit">Scrape</button>
     </form>
 
     <div id="loading">Scraping product data, please wait...</div>
@@ -327,35 +403,74 @@
 
     inputTypeSelect.addEventListener('change', () => {
         inputField.placeholder = inputTypeSelect.value === 'url' ? "Enter Product URL..." : "Enter Product ID...";
+        inputField.value = ''; // Clear the input when type changes
     });
 
     scrapeForm.addEventListener('submit', async function(event) {
         event.preventDefault();
         responseOutput.innerHTML = '';
         errorDiv.style.display = 'none';
-        loadingDiv.style.display = 'block';
+
+        const inputValue = inputField.value.trim();
+        const inputType = inputTypeSelect.value;
+
+        // === Client-side Validation ===
+        if (inputValue === '') {
+            alert(`Please enter a Walmart ${inputType}.`);
+            return;
+        }
+
+        if (inputType === 'url') {
+            // Regex to check for a basic URL format
+            const urlRegex = /^(https?:\/\/(www\.)?walmart\.com\/ip\/[^\s]+)$/i;
+            if (!urlRegex.test(inputValue)) {
+                alert("Invalid URL. Please enter a valid Walmart product URL (e.g., https://www.walmart.com/ip/...).");
+                return;
+            }
+        } else if (inputType === 'id') {
+            if (isNaN(inputValue) || inputValue.includes('.')) {
+                alert("Invalid Product ID. Please enter only numbers.");
+                return;
+            }
+        }
+
+        // Show loading state and proceed with API call
+        loadingDiv.style.display = 'flex';
 
         try {
             const response = await fetch('/scrape_Walmart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    url_or_id: inputField.value,
-                    input_type: inputTypeSelect.value
+                    url_or_id: inputValue,
+                    input_type: inputType
                 })
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.detail || 'An unknown error occurred.');
+                throw new Error(errorData.detail || 'An unknown server error occurred.');
             }
 
             const data = await response.json();
             displayProductData(data);
 
         } catch (error) {
-            errorDiv.textContent = `Error: ${error.message}`;
-            errorDiv.style.display = 'block';
+            let userMessage = "An unexpected error occurred. Please try again later.";
+
+            // Custom messages for specific errors
+            if (error.message.includes('404')) {
+                userMessage = "Product Not Found. Please check the URL or ID and try again.";
+            } else if (error.message.includes('500')) {
+                userMessage = "The server failed to get product details. This might be a temporary issue. Please try again in a moment.";
+            } else if (error.message.includes('network')) {
+                userMessage = "Network error. Please check your internet connection and try again.";
+            } else {
+                userMessage = error.message; // Fallback to original error for other issues
+            }
+
+            errorDiv.textContent = userMessage;
+            errorDiv.style.display = 'flex'; // Use flexbox for centering
         } finally {
             loadingDiv.style.display = 'none';
         }
@@ -364,11 +479,10 @@
     function displayProductData(data) {
         if (!data || !data.title) {
             errorDiv.textContent = 'Error: Received empty or invalid product data.';
-            errorDiv.style.display = 'block';
+            errorDiv.style.display = 'flex';
             return;
         }
 
-        // --- Image Gallery ---
         let imageGalleryHtml = '';
         if (data.all_images && data.all_images.length > 0) {
             imageGalleryHtml = data.all_images.map((imgUrl, index) =>
@@ -376,14 +490,9 @@
             ).join('');
         }
 
-        // --- Specifications Grid ---
         const specs = {
-            "UPC": data.upc,
-            "Net Weight": data.net_weight,
-            "Pack Size": data.pack_size,
-            "Calories": data.calories,
-            "Location": data.state,
-            "Allergens": data.allergens
+            "UPC": data.upc, "Net Weight": data.net_weight, "Pack Size": data.pack_size,
+            "Calories": data.calories, "Location": data.state, "Allergens": data.allergens
         };
         let specGridHtml = '<div class="spec-grid">';
         for (const [label, value] of Object.entries(specs)) {
@@ -393,11 +502,7 @@
         }
         specGridHtml += '</div>';
 
-        // --- Ingredients & Nutrition ---
         let ingredientsHtml = data.ingredients ? `<div class="info-section"><h3>Ingredients</h3><p>${data.ingredients}</p></div>` : '';
-        let nutritionHtml = data.nutrition ? `<div class="info-section"><h3>Nutrition Facts</h3><div id="nutrition-facts-container">${data.nutrition}</div></div>` : '';
-
-        // --- Reviews Section ---
         let reviewsHtml = '';
         if (data.reviews && data.reviews.length > 0) {
             reviewsHtml += '<div class="info-section"><h3>Customer Reviews</h3>';
@@ -417,18 +522,15 @@
             reviewsHtml += '</div>';
         }
 
-        // --- Shop Confidently Section (NEW) ---
         let shopConfidentlyHtml = '';
         if (data.shop_confidently && data.shop_confidently.length > 0) {
             shopConfidentlyHtml = `
                 <div class="shop-confidently-section">
-                    <h4>Shop Confidently</h4>
                     <div class="shop-confidently-badges">
                         ${data.shop_confidently.map(badgeText => `<div class="badge">${badgeText.trim()}</div>`).join('')}
                     </div>
                 </div>`;
         }
-
 
         const productHtml = `
             <div class="product-grid">
@@ -450,7 +552,6 @@
             ${ingredientsHtml}
             ${reviewsHtml}
         `;
-
         responseOutput.innerHTML = productHtml;
     }
 
