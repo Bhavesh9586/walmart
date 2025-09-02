@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walmart Product Scraper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --background-gradient: linear-gradient(135deg, #1f283d, #2c3e50);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+            --text-light: #f0f0f0;
+            --text-dark: #333;
+            --box-shadow-heavy: rgba(0, 0, 0, 0.25);
+            --box-shadow-light: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--background-gradient);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: var(--glass-border);
+            border-radius: 20px;
+            padding: 30px 40px;
+            box-shadow: 0 8px 32px var(--box-shadow-heavy);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px var(--box-shadow-heavy);
+        }
+
+        /* Form Styling */
+        #scrapeForm {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        #url-or-id {
+            flex-grow: 1;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-dark);
+            box-shadow: inset 0 2px 4px var(--box-shadow-light);
+        }
+
+        #url-or-id:focus {
+            outline: 2px solid var(--primary-color);
+        }
+
+        .select-wrapper, button {
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .select-wrapper {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        #input-type {
+            border: none;
+            background: transparent;
+            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--box-shadow-heavy);
+        }
+
+        /* Feedback styling */
+        #loading, #error {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            display: none; /* Hidden by default */
+        }
+        #loading { background-color: rgba(0, 123, 255, 0.2); border: 1px solid var(--primary-color); }
+        #error { background-color: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ff8a98; }
+
+        /* Results Styling */
+        #responseOutput { margin-top: 30px; }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px var(--box-shadow-heavy);
+            margin-bottom: 15px;
+        }
+
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .gallery-thumb {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .gallery-thumb:hover, .gallery-thumb.active {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .product-details h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            line-height: 1.3;
+        }
+        .product-details .brand {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #a0c3ff;
+            margin-bottom: 15px;
+        }
+        .product-details .price {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .spec-item {
+            background: rgba(0,0,0,0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+        .spec-item .label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .spec-item .value {
+            font-size: 1.1rem;
+        }
+
+        .info-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: var(--glass-border);
+        }
+        .info-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .info-section p {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Nutrition Facts Styling */
+        #nutrition-facts-container {
+            background: white;
+            color: var(--text-dark);
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        /* Review Section Styling */
+        .review-item {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .review-user {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .review-rating {
+            font-size: 1.1rem;
+            color: #ffc107;
+        }
+        .review-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .review-text {
+            font-size: 0.95rem;
+            color: #ddd;
+            line-height: 1.6;
+        }
+
+        /* Shop Confidently Styling (NEW) */
+        .shop-confidently-section {
+            margin-top: 25px;
+        }
+        .shop-confidently-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        .shop-confidently-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .badge {
+            background: rgba(255, 255, 255, 0.15);
+            color: #f0f0f0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .badge::before {
+            content: '✔';
+            color: #28a745;
+            font-weight: bold;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 800px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            .container { padding: 20px; }
+            h1 { font-size: 2rem; }
+        }
+        @media (max-width: 500px) {
+            #scrapeForm { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Walmart Scraper 🛒</h1>
+    <form id="scrapeForm">
+        <div class="select-wrapper">
+            <select id="input-type">
+                <option value="url">Product URL</option>
+                <option value="id">Product ID</option>
+            </select>
+        </div>
+        <input type="text" id="url-or-id" name="url-or-id" placeholder="Enter Product URL..." required>
+        <button type="submit">Scrape Product</button>
+    </form>
+
+    <div id="loading">Scraping product data, please wait...</div>
+    <div id="error"></div>
+    <div id="responseOutput"></div>
+</div>
+
+<script>
+    const scrapeForm = document.getElementById('scrapeForm');
+    const inputTypeSelect = document.getElementById('input-type');
+    const inputField = document.getElementById('url-or-id');
+    const responseOutput = document.getElementById('responseOutput');
+    const loadingDiv = document.getElementById('loading');
+    const errorDiv = document.getElementById('error');
+
+    inputTypeSelect.addEventListener('change', () => {
+        inputField.placeholder = inputTypeSelect.value === 'url' ? "Enter Product URL..." : "Enter Product ID...";
+    });
+
+    scrapeForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        responseOutput.innerHTML = '';
+        errorDiv.style.display = 'none';
+        loadingDiv.style.display = 'block';
+
+        try {
+            const response = await fetch('/scrape_Walmart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    url_or_id: inputField.value,
+                    input_type: inputTypeSelect.value
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'An unknown error occurred.');
+            }
+
+            const data = await response.json();
+            displayProductData(data);
+
+        } catch (error) {
+            errorDiv.textContent = `Error: ${error.message}`;
+            errorDiv.style.display = 'block';
+        } finally {
+            loadingDiv.style.display = 'none';
+        }
+    });
+
+    function displayProductData(data) {
+        if (!data || !data.title) {
+            errorDiv.textContent = 'Error: Received empty or invalid product data.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        // --- Image Gallery ---
+        let imageGalleryHtml = '';
+        if (data.all_images && data.all_images.length > 0) {
+            imageGalleryHtml = data.all_images.map((imgUrl, index) =>
+                `<img src="${imgUrl}" alt="Product thumbnail ${index+1}" class="gallery-thumb ${index === 0 ? 'active' : ''}" onclick="changeMainImage(this, '${imgUrl}')">`
+            ).join('');
+        }
+
+        // --- Specifications Grid ---
+        const specs = {
+            "UPC": data.upc,
+            "Net Weight": data.net_weight,
+            "Pack Size": data.pack_size,
+            "Calories": data.calories,
+            "Location": data.state,
+            "Allergens": data.allergens
+        };
+        let specGridHtml = '<div class="spec-grid">';
+        for (const [label, value] of Object.entries(specs)) {
+            if (value && value !== 'N/A') {
+                specGridHtml += `<div class="spec-item"><div class="label">${label}</div><div class="value">${value}</div></div>`;
+            }
+        }
+        specGridHtml += '</div>';
+
+        // --- Ingredients & Nutrition ---
+        let ingredientsHtml = data.ingredients ? `<div class="info-section"><h3>Ingredients</h3><p>${data.ingredients}</p></div>` : '';
+        let nutritionHtml = data.nutrition ? `<div class="info-section"><h3>Nutrition Facts</h3><div id="nutrition-facts-container">${data.nutrition}</div></div>` : '';
+
+        // --- Reviews Section ---
+        let reviewsHtml = '';
+        if (data.reviews && data.reviews.length > 0) {
+            reviewsHtml += '<div class="info-section"><h3>Customer Reviews</h3>';
+            data.reviews.forEach(review => {
+                const stars = '⭐'.repeat(review.rating || 0);
+                reviewsHtml += `
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-user">${review.user || 'Anonymous'}</div>
+                            <div class="review-rating">${stars}</div>
+                        </div>
+                        ${review.title ? `<div class="review-title">${review.title}</div>` : ''}
+                        <div class="review-text">${review.text || 'No text provided.'}</div>
+                    </div>
+                `;
+            });
+            reviewsHtml += '</div>';
+        }
+
+        // --- Shop Confidently Section (NEW) ---
+        let shopConfidentlyHtml = '';
+        if (data.shop_confidently && data.shop_confidently.length > 0) {
+            shopConfidentlyHtml = `
+                <div class="shop-confidently-section">
+                    <h4>Shop Confidently</h4>
+                    <div class="shop-confidently-badges">
+                        ${data.shop_confidently.map(badgeText => `<div class="badge">${badgeText.trim()}</div>`).join('')}
+                    </div>
+                </div>`;
+        }
+
+
+        const productHtml = `
+            <div class="product-grid">
+                <div class="image-section">
+                    <img src="${data.main_image || ''}" alt="Main product image" id="main-product-image" class="main-image">
+                    <div class="image-gallery">${imageGalleryHtml}</div>
+                </div>
+                <div class="product-details">
+                    <div class="brand">${data.brand || 'Brand not available'}</div>
+                    <h2>${data.title}</h2>
+                    <div class="price">$${data.price !== null ? data.price.toFixed(2) : 'N/A'}</div>
+                    ${specGridHtml}
+                    ${shopConfidentlyHtml}
+                </div>
+            </div>
+
+            ${data.description ? `<div class="info-section"><h3>Description</h3><p>${data.description}</p></div>` : ''}
+            ${data.description_full ? `<div class="info-section"><h3>Detailed Description</h3><p>${data.description_full}</p></div>` : ''}
+            ${ingredientsHtml}
+            ${reviewsHtml}
+        `;
+
+        responseOutput.innerHTML = productHtml;
+    }
+
+    function changeMainImage(thumbElement, newSrc) {
+        document.getElementById('main-product-image').src = newSrc;
+        document.querySelectorAll('.gallery-thumb').forEach(thumb => thumb.classList.remove('active'));
+        thumbElement.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
