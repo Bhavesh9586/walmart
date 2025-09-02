@@ -1,85 +1,92 @@
-# Walmart Product API
+# 🛒 Walmart Scraper API (FastAPI)
 
-A Flask-based REST API that extracts detailed product information from Walmart product URLs.
+A production-ready **FastAPI-based Walmart Product Scraper API** that extracts structured product details, reviews, nutrition info, specifications, and more directly from Walmart product pages.  
 
-## Features
+## 🚀 Features
+- Input: Walmart **Product ID** or **Product URL**  
+- Extracts:
+  - Product name, brand, price, UPC, size (oz)  
+  - Short + Long descriptions  
+  - Nutrition facts & ingredients  
+  - Specifications (calories, allergens, etc.)  
+  - Location info (state, city, postal code)  
+  - Customer reviews (title, text, nickname, rating)  
+  - Highlights (pack size, confidently badges)  
+- Clean **JSON output**  
+- FastAPI **Swagger UI** at `/docs`  
 
-- Extract product title, price, rating, brand, description
-- Get product images
-- Check availability status
-- Structured data extraction
-- Error handling and validation
-- CORS enabled for frontend integration
+---
 
-## Installation
+## ⚙️ Installation
 
-1. Install dependencies:
-```bash
+1. Clone this repo:
+   ```bash
+   git clone https://github.com/your-username/walmart-scraper-api.git
+   cd walmart-scraper-api
+Create virtual environment (optional but recommended):
+
+bash
+Copy code
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+Install dependencies:
+
+bash
+Copy code
 pip install -r requirements.txt
-```
+▶️ Run Locally
+bash
+Copy code
+uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+Open in browser:
 
-2. Run the API:
-```bash
-python app.py
-```
+API UI → http://127.0.0.1:8000/docs
 
-The API will start on `http://localhost:5000`
+Web UI → http://127.0.0.1:8000/
 
-## API Endpoints
+🌐 Deploy on Render
+Push your code to a GitHub repo.
 
-### GET /
-Returns API information and usage instructions.
+Create a new Web Service on Render.
 
-### POST /extract
-Extracts product details from a Walmart URL.
+Set Start Command as:
 
-**Request Body:**
-```json
-{
-  "url": "https://www.walmart.com/ip/product-name/product-id"
-}
-```
+bash
+Copy code
+uvicorn app:app --host 0.0.0.0 --port $PORT
+Add requirements.txt in root of repo.
 
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "title": "Product Name",
-    "price": "$XX.XX",
-    "rating": "4.5/5",
-    "brand": "Brand Name",
-    "description": "Product description...",
-    "images": ["image1.jpg", "image2.jpg"],
-    "availability": "In Stock",
-    "product_id": "123456789",
-    "url": "original_url",
-    "scraped_at": "2024-01-01 12:00:00"
-  }
-}
-```
+Deploy 🚀
 
-### GET /health
-Health check endpoint.
-
-## Usage Example
-
-```bash
-curl -X POST http://localhost:5000/extract \
+📝 API Usage
+Example cURL
+bash
+Copy code
+curl -X POST "https://your-render-url.onrender.com/scrape" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://www.walmart.com/ip/Apple-iPhone-15-128GB-Blue/5051007897"}'
-```
-
-## Error Handling
-
-The API handles various error scenarios:
-- Invalid URLs
-- Network errors
-- Scraping failures
-- Missing request data
-
-## Notes
-
-- The API uses web scraping, so it may need updates if Walmart changes their website structure
-- Rate limiting is recommended for production use
-- Some product details may not be available for all products
+  -d '{"url": "https://www.walmart.com/ip/123456789"}'
+Example Response
+json
+Copy code
+{
+  "product_id": "123456789",
+  "name": "Walmart Sample Product",
+  "brand": "Great Value",
+  "price": 12.99,
+  "upc": "000123456789",
+  "short_description": "Delicious and fresh...",
+  "long_description": "Full product description...",
+  "nutrition": { "calories": 120, "allergens": "Milk, Soy" },
+  "reviews": [
+    { "nickname": "JohnD", "title": "Great!", "rating": 5, "text": "Loved it!" }
+  ]
+}
+📂 Project Structure
+csharp
+Copy code
+.
+├── app.py             # FastAPI main app
+├── requirements.txt   # Dependencies
+├── README.md          # Documentation
+└── static/            # HTML, CSS, JS for UI
