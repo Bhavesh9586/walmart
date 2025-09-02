@@ -5,3 +5,4 @@ lxml
 jmespath
 python-multipart
 jinja2
+parsel
